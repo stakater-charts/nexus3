@@ -1,0 +1,11 @@
+apiVersion: v1
+name: nexus3
+description: nexus3 chart that runs on kubernetes
+version: 1.0.0
+keywords:
+  - nexus3
+  - kubernetes
+home: https://github.com/stakater/chart-nexus3
+maintainers:
+- name: Stakater
+  email: stakater@aurorasolutions.io

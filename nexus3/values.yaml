@@ -1,0 +1,11 @@
+nexus3:
+  namespace: tools
+  image:
+    name: sonatype/nexus3
+    tag: "3.6.0"
+    pullPolicy: IfNotPresent
+  services:
+    docker:
+      ingressClass: external-ingress
+    self:
+      ingressClass: internal-ingress

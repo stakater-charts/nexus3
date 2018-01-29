@@ -1,0 +1,66 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nexus
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
+        version: {{ .Chart.Version }}
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: '[{"image":"busybox","imagePullPolicy":"IfNotPresent","name":"fmp-volume-permission","command":["chown", "-R", "200", "/nexus-data"],"volumeMounts":[{"mountPath":"/nexus-data","name":"nexus3-data"}]},{"image":"busybox","imagePullPolicy":"IfNotPresent","name":"fmp-volume-permission2","command":["chmod", "-R", "777", "/nexus3-conf"],"volumeMounts":[{"mountPath":"/nexus3-conf","name":"nexus3-conf"}]}]'
+    spec:
+      containers:
+        - name: nexus
+          image: "{{ .Values.nexus3.image.name }}:{{ .Values.nexus3.image.tag }}"
+          imagePullPolicy: {{ .Values.nexus3.image.pullPolicy }}
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "/nexus3-conf/postStart.sh"]
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 1000
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+          ports:
+            - containerPort: 8081
+            - containerPort: 5000
+          volumeMounts:
+            - name: nexus3-data
+              mountPath: /nexus-data
+            - name: nexus3-conf
+              mountPath: /nexus3-conf
+            - name: admin-account-volume
+              mountPath: /etc/secret-volume
+              readOnly: true
+          resources:
+            requests:
+              cpu: "0"
+              memory: "0"
+            limits:
+              cpu: "0"
+              memory: "0"
+      volumes:
+      - name: nexus3-conf
+        configMap:
+          name: nexus3-conf
+      - name: nexus3-data
+        persistentVolumeClaim:
+          claimName: nexus
+      - name: admin-account-volume
+        secret:
+          secretName: nexus-admin-account
