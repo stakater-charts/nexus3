@@ -10,5 +10,5 @@ nexus3:
     self:
       ingressClass: internal-ingress
   secrets:
-    admin_account.json: somevalue
-    cluster_account.json: somevalue
+    admin_account: ""
+    cluster_account: ""
