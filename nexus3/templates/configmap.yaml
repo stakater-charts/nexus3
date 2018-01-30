@@ -32,10 +32,16 @@ data:
 
     echo "uploading secret admin account script"
     STATUSCODE=$(curl --output /dev/stderr --silent -v -u $USERNAME:$PASSWORD --header "Content-Type: application/json" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/" -d @/etc/secret-volume/.admin_account.json)
-    if [ $STATUSCODE -lt 200] || [ $STATUSCODE -gt 299 ]
+    if [ $STATUSCODE -eq 403 ]
+    then
+       echo "Already initialized; as we remove rights of the admin user in the end of this script; when it runs first time. So, when container restarts it should work."
+       exit 0
+    elif [ $STATUSCODE -lt 200] || [ $STATUSCODE -gt 299 ]
     then
         echo "Could not upload secret"
         exit 1
+    else
+      echo $STATUSCODE
     fi
 
     echo "Executing secret admin account script"
