@@ -19,6 +19,9 @@ spec:
     port: 80
     targetPort: 8081
   selector:
-    app: nexus
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+    version: {{ .Chart.Version }}
   type: ClusterIP
 
