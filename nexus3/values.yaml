@@ -9,3 +9,6 @@ nexus3:
       ingressClass: external-ingress
     self:
       ingressClass: internal-ingress
+  secrets:
+    admin_account.json: somevalue
+    cluster_account.json: somevalue
