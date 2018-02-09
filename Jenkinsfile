@@ -8,22 +8,27 @@ String nexus3StorageChartName = "nexus3-storage"
 
 clientsNode(clientsImage: 'stakater/kops-ansible:helm-bundle') {
     container(name: 'clients') {
+        def helm = new io.stakater.charts.Helm()
+        def chartManager = new io.stakater.charts.ChartManager()
         stage('Checkout') {
             checkout scm
         }
         
         stage('Init Helm') {
-            sh "helm init --client-only"
+            helm.init(true)
         }
 
         stage('Prepare Chart') {
-            nexus3PackageName = prepareChart(nexus3ChartName)
-            nexus3StoragePackageName = prepareChart(nexus3StorageChartName)
+            helm.lint(WORKSPACE, nexus3ChartName)
+            nexus3PackageName = helm.package(WORKSPACE, nexus3ChartName)
+
+            helm.lint(WORKSPACE, nexus3StorageChartName)
+            nexus3StoragePackageName = helm.package(WORKSPACE, nexus3StorageChartName)
         }
 
         stage('Upload Chart') {
-            uploadChart(nexus3ChartName, nexus3PackageName)
-            uploadChart(nexus3StorageChartName, nexus3StoragePackageName)
+            chartManager.uploadToChartMuseum(WORKSPACE, nexus3ChartName, nexus3PackageName)
+            chartManager.uploadToChartMuseum(WORKSPACE, nexus3StorageChartName, nexus3StoragePackageName)
         }
     }
 }
