@@ -6,7 +6,7 @@ String nexus3StoragePackageName = ""
 String nexus3ChartName = "nexus3"
 String nexus3StorageChartName = "nexus3-storage"
 
-clientsNode(clientsImage: 'stakater/kops-ansible:helm-bundle') {
+clientsNode(clientsImage: 'stakater/pipeline-tools:dev') {
     container(name: 'clients') {
         def helm = new io.stakater.charts.Helm()
         def chartManager = new io.stakater.charts.ChartManager()
