@@ -1,4 +1,9 @@
 nexus3Storage:
   namespace: tools
+  labels:
+    group: com.stakater.platform
+    provider: stakater
+    version: 3.6.0
+  capacity: 200Gi
   efs:
     server: fs-blahblah.efs.us-west-2.amazonaws.com
