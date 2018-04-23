@@ -8,10 +8,8 @@ metadata:
       kubernetes.io/ingress.class: {{ .Values.nexus3.services.docker.ingressClass }}
   labels:
     expose: "true"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
-    version: {{ .Chart.Version }}
+{{ include "labels.stakater" . | indent 4 }}
+{{ include "labels.chart" . | indent 4 }}
   name: docker
 spec:
   ports:
@@ -19,9 +17,5 @@ spec:
     port: 80
     targetPort: 5000
   selector:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
-    version: {{ .Chart.Version }}
+{{ include "labels.selector" . | indent 4 }}
   type: ClusterIP
-

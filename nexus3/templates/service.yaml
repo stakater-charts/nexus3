@@ -8,20 +8,14 @@ metadata:
       kubernetes.io/ingress.class: {{ .Values.nexus3.services.self.ingressClass }}
   labels:
     expose: "true"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
-    version: {{ .Chart.Version }}
-  name: nexus
+{{ include "labels.stakater" . | indent 4 }}
+{{ include "labels.chart" . | indent 4 }}
+  name: {{ template "name" . }}
 spec:
   ports:
   - name: http
     port: 80
     targetPort: 8081
   selector:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
-    version: {{ .Chart.Version }}
+{{ include "labels.selector" . | indent 4 }}
   type: ClusterIP
-

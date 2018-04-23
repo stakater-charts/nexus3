@@ -1,5 +1,9 @@
 nexus3:
   namespace: tools
+  labels:
+    group: com.stakater.platform
+    provider: stakater
+    version: 3.6.0
   image:
     name: sonatype/nexus3
     tag: "3.6.0"
@@ -12,3 +16,14 @@ nexus3:
   secrets:
     admin_account: ""
     cluster_account: ""
+  probes:
+    liveness:
+      initialDelaySeconds: 1000
+      timeoutSeconds: 10
+    readiness:
+      initialDelaySeconds: 30
+      timeoutSeconds: 10
+  persistence:
+    enabled: true
+    volumeClaimName: nexus3-storage
+  configFiles:
