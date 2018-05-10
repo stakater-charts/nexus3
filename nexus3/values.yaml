@@ -27,3 +27,236 @@ nexus3:
     enabled: true
     volumeClaimName: nexus3-storage
   configFiles:
+    postStart.sh: |
+      #!/usr/bin/env bash
+      HOST=localhost:8081
+
+      # default user setup by Nexus. In the end of this script I will remove all roles from this account
+      USERNAME=admin
+      PASSWORD=admin123
+
+      # Admin Account details specified in nexus secret .admin_account.json
+      ADMIN_ACCOUNT_USERNAME=stackator-admin
+      # Cluster Account details specified in nexus secret .cluster_account.json
+      CLUSTER_ACCOUNT_USERNAME=stackator-cluster
+
+      echo `pwd`
+      cd /nexus3-conf/
+
+      REPOS=($(ls | grep json | sed -e 's/\..*$//'))
+
+      until $(curl --output /dev/null --silent --head --fail http://$HOST/); do
+        echo $?
+        printf '.'
+        sleep 5
+      done
+
+      if [ ${#REPOS[@]} -lt 1 ]
+      then
+        echo "Not enough JSON files!"
+        exit 1
+      fi
+
+      echo "uploading secret admin account script"
+      STATUSCODE=$(curl --output /dev/stderr --silent -v -u $USERNAME:$PASSWORD --header "Content-Type: application/json" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/" -d @/etc/secret-volume/.admin_account.json)
+      if [ $STATUSCODE -eq 403 ]
+      then
+        echo "Already initialized; as we remove rights of the admin user in the end of this script; when it runs first time. So, when container restarts it should work."
+        exit 0
+      elif [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+      then
+          echo "Could not upload secret"
+          exit 1
+      else
+        echo $STATUSCODE
+      fi
+
+      echo "Executing secret admin account script"
+      STATUSCODE=$(curl --output /dev/stderr --silent -v -X POST -u $USERNAME:$PASSWORD --header "Content-Type: text/plain" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/${ADMIN_ACCOUNT_USERNAME}/run")
+      if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+      then
+          echo "Could not execute secret"
+          exit 1
+      fi
+
+      echo "Delete secret admin account script"
+      STATUSCODE=$(curl -X "DELETE" --output /dev/stderr --silent -v -u $USERNAME:$PASSWORD  --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/${ADMIN_ACCOUNT_USERNAME}")
+      if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+      then
+          echo "Could not delete secret"
+          exit 1
+      fi
+
+      echo "Uploading secret cluster account script"
+      STATUSCODE=$(curl --output /dev/stderr --silent -v -u $USERNAME:$PASSWORD --header "Content-Type: application/json" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/" -d @/etc/secret-volume/.cluster_account.json)
+      if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+      then
+          echo "Could not upload secret"
+          exit 1
+      fi
+
+      echo "Executing secret cluster account script"
+      STATUSCODE=$(curl --output /dev/stderr --silent -v -X POST -u $USERNAME:$PASSWORD --header "Content-Type: text/plain" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/${CLUSTER_ACCOUNT_USERNAME}/run")
+      if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+      then
+          echo "Could not execute secret"
+          exit 1
+      fi
+
+      echo "Deleting secret cluster account script"
+      STATUSCODE=$(curl -X "DELETE" --output /dev/stderr --silent -v -u $USERNAME:$PASSWORD  --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/${CLUSTER_ACCOUNT_USERNAME}")
+      if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+      then
+          echo "Could not delete secret"
+          exit 1
+      fi
+
+      for i in "${REPOS[@]}"
+      do
+        echo "creating $i repository"
+        STATUSCODE=$(curl --output /dev/stderr --silent -v -u $USERNAME:$PASSWORD --header "Content-Type: application/json" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/" -d @$i.json)
+        if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+        then
+            echo "Could not upload $i"
+            exit 1
+        fi
+
+        STATUSCODE=$(curl --output /dev/stderr --silent -v -X POST -u $USERNAME:$PASSWORD --header "Content-Type: text/plain" --write-out "%{http_code}" "http://$HOST/service/siesta/rest/v1/script/$i/run")
+        if [ $STATUSCODE -lt 200 ] || [ $STATUSCODE -gt 299 ]
+        then
+            echo "Could not execute $i"
+            exit 1
+        fi
+      done
+
+      exit $?
+
+    eclipselink.json: |
+      {
+        "name": "eclipselink",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('eclipselink', 'http://download.eclipse.org/rt/eclipselink/maven.repo/')"
+      }
+
+    fuse.json: |
+      {
+        "name": "fuse",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('fuse', 'https://repository.jboss.org/nexus/content/repositories/fs-releases/')"
+      }
+
+    fuse-ea.json: |
+      {
+        "name": "fuse-ea",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('fuse-ea', 'https://repo.fusesource.com/nexus/content/groups/ea/')"
+      }
+
+    jboss.json: |
+      {
+        "name": "jboss",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('jboss', 'https://repository.jboss.org/nexus/content/groups/public/')"
+      }
+
+    jboss-http: |
+      {
+        "name": "jboss-http",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('jboss-http', 'http://repository.jboss.org/nexus/content/groups/public/')"
+      }
+
+    jcenter.json: |
+      {
+        "name": "jcenter",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('jcenter', 'http://jcenter.bintray.com/')"
+      }
+
+    jenkins-ci.json: |
+      {
+        "name": "jenkins-ci",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('jenkins-ci', 'http://repo.jenkins-ci.org/public/')"
+      }
+
+    npm-internal.json: |
+      {
+        "name": "npm-internal",
+        "type": "groovy",
+        "content": "repository.createNpmHosted('npm-internal')"
+      }
+
+    npmjs.json: |
+      {
+        "name": "npmjs",
+        "type": "groovy",
+        "content": "repository.createNpmProxy('npmjs', 'https://registry.npmjs.org')"
+      }
+
+    servicemix.json: |
+      {
+        "name": "servicemix",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('servicemix', 'http://svn.apache.org/repos/asf/servicemix/m2-repo/')"
+      }
+
+    sonatype-snapshots.json: |
+      {
+        "name": "sonatype-snapshots",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('sonatype-snapshots', 'https://oss.sonatype.org/content/repositories/snapshots/')"
+      }
+
+    sonatype-staging.json: |
+      {
+        "name": "sonatype-staging",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('sonatype-staging', 'https://oss.sonatype.org/content/repositories/staging/')"
+      }
+
+    spring-milestone.json: |
+      {
+        "name": "spring-milestone",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('spring-milestone', 'http://repo.spring.io/milestone/')"
+      }
+
+    spring-release.json: |
+      {
+        "name": "spring-release",
+        "type": "groovy",
+        "content": "repository.createMavenProxy('spring-release', 'http://repo.spring.io/release/')"
+      }
+
+    zzz_npm-all.json: |
+      {
+        "name": "zzz_npm-all",
+        "type": "groovy",
+        "content": "repository.createNpmGroup('npm-all', ['npmjs','npm-internal'])"
+      }
+
+    zzz_public.json: |
+      {
+        "name": "zzz_public",
+        "type": "groovy",
+        "content": "repository.createMavenGroup('public', ['fuse','jboss','jenkins-ci','maven-central','maven-public','maven-releases','maven-snapshots','sonatype-snapshots','sonatype-staging'])"
+      }
+    stackator-docker.json: |
+      {
+        "name": "stackator-docker",
+        "type": "groovy",
+        "content": "repository.createDockerHosted('stackator-docker', 5000, null, 'default', false, true, org.sonatype.nexus.repository.storage.WritePolicy.ALLOW)"
+      }
+    remove-anonymous-configuration.json: |
+      {
+        "name": "remove-anonymous-configuration",
+        "type": "groovy",
+        "content": "security.setAnonymousAccess(false)"
+      }
+    zzzz-remove-default.json: |
+      {
+        "name": "zzzz-remove-default",
+        "type": "groovy",
+        "content": "security.setUserRoles('admin', [])"
+      }
