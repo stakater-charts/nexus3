@@ -23,7 +23,7 @@ provider: {{ .Values.nexus3.labels.provider }}
 
 {{- define "labels.stakater" -}}
 {{ template "labels.selector" . }}
-version: {{ .Values.nexus3.labels.version }}
+version: "{{ .Values.nexus3.labels.version }}"
 {{- end -}}
 
 {{- define "labels.chart" -}}
