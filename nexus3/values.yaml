@@ -10,7 +10,7 @@ nexus3:
     pullPolicy: IfNotPresent
   services:
     docker:
-      ingressClass: external-ingress
+      ingressClass: internal-ingress
     self:
       ingressClass: internal-ingress
   secrets:
