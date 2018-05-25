@@ -11,10 +11,10 @@ nexus3:
   services:    
     docker:
       ingressClass: internal-ingress
-      forceSslRedirect: "false"
+      forceSslRedirect: "true"
     self:
       ingressClass: internal-ingress
-      forceSslRedirect: "false"
+      forceSslRedirect: "true"
   secrets:
     admin_account: ""
     cluster_account: ""
