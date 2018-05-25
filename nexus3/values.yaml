@@ -8,11 +8,13 @@ nexus3:
     name: sonatype/nexus3
     tag: "3.6.0"
     pullPolicy: IfNotPresent
-  services:
+  services:    
     docker:
       ingressClass: internal-ingress
+      forceSslRedirect: "false"
     self:
       ingressClass: internal-ingress
+      forceSslRedirect: "false"
   secrets:
     admin_account: ""
     cluster_account: ""
