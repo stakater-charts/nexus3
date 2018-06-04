@@ -1,11 +1,11 @@
 apiVersion: v1
 name: nexus-storage
 description: nexus-storage chart that runs on kubernetes
-version: 1.0.3
+version: 1.0.4
 keywords:
   - nexus-storage
   - kubernetes
 home: https://github.com/stakater/chart-nexus3
 maintainers:
 - name: Stakater
-  email: stakater@aurorasolutions.io
+  email: hello@stakater.com
