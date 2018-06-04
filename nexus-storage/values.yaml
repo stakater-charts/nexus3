@@ -1,4 +1,4 @@
-nexus3Storage:
+nexusStorage:
   namespace: tools
   labels:
     group: com.stakater.platform

@@ -4,5 +4,5 @@
 def dummy = ""
 
 prepareAndUploadCharts {
-    charts = [ "nexus3", "nexus3-storage" ]
+    charts = [ "nexus", "nexus-storage" ]
 }

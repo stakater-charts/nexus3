@@ -34,8 +34,8 @@ spec:
             mountPath: /{{ template "name" . }}-conf
       containers:
         - name: {{ template "name" . }}
-          image: "{{ .Values.nexus3.image.name }}:{{ .Values.nexus3.image.tag }}"
-          imagePullPolicy: {{ .Values.nexus3.image.pullPolicy }}
+          image: "{{ .Values.nexus.image.name }}:{{ .Values.nexus.image.tag }}"
+          imagePullPolicy: {{ .Values.nexus.image.pullPolicy }}
           lifecycle:
             postStart:
               exec:
@@ -44,14 +44,14 @@ spec:
             httpGet:
               path: /
               port: 8081
-            initialDelaySeconds: {{ .Values.nexus3.probes.liveness.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.nexus3.probes.liveness.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.nexus.probes.liveness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.nexus.probes.liveness.timeoutSeconds }}
           readinessProbe:
             httpGet:
               path: /
               port: 8081
-            initialDelaySeconds: {{ .Values.nexus3.probes.readiness.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.nexus3.probes.readiness.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.nexus.probes.readiness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.nexus.probes.readiness.timeoutSeconds }}
           ports:
             - containerPort: 8081
             - containerPort: 5000
@@ -68,9 +68,9 @@ spec:
         configMap:
           name: {{ template "name" . }}-conf
       - name: {{ template "name" . }}-data
-        {{- if .Values.nexus3.persistence.enabled }}
+        {{- if .Values.nexus.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: {{ .Values.nexus3.persistence.volumeClaimName }}
+          claimName: {{ .Values.nexus.persistence.volumeClaimName }}
         {{- else }}
         emptyDir: {}
         {{- end }}

@@ -7,9 +7,9 @@ metadata:
   name: {{ template "name" . }}-pv
 spec:
   capacity:
-    storage: {{ .Values.nexus3Storage.capacity }}
+    storage: {{ .Values.nexusStorage.capacity }}
   accessModes:
     - ReadWriteOnce
   nfs:
-    server: {{ .Values.nexus3Storage.efs.server }}
+    server: {{ .Values.nexusStorage.efs.server }}
     path: "/nexus"

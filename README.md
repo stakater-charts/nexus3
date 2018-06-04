@@ -1,17 +1,17 @@
 # chart-nexus3
-This repository contains 2 charts that are used to deploy nexus3 to kubernetes.
-- nexus3-storage
-- nexus3
+This repository contains 2 charts that are used to deploy nexus to kubernetes.
+- nexus-storage
+- nexus
 
 ## Installing
-First install `nexus3-storage` chart
+First install `nexus-storage` chart
 ```
-helm install --name nexus3-storage chartmuseum/nexus3-storage
+helm install --name nexus-storage chartmuseum/nexus-storage
 ```
 
-After that, install `nexus3` chart
+After that, install `nexus` chart
 ```
-helm install --name nexus3 chartmuseum/nexus3
+helm install --name nexus chartmuseum/nexus
 ```
 
 ### Notes

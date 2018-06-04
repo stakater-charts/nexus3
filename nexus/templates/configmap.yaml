@@ -6,7 +6,7 @@ metadata:
 {{ include "labels.stakater" . | indent 4 }}
 {{ include "labels.chart" . | indent 4 }}
 data:
-  {{- range $key, $value := .Values.nexus3.configFiles }}
+  {{- range $key, $value := .Values.nexus.configFiles }}
   {{ $key }}: |
 {{ $value | indent 4}}
   {{- end }}

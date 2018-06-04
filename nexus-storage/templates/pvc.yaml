@@ -10,5 +10,5 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.nexus3Storage.capacity }}
+      storage: {{ .Values.nexusStorage.capacity }}
   volumeName: {{ template "name" . }}-pv

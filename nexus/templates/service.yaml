@@ -3,9 +3,9 @@ kind: Service
 metadata:
   annotations:
     fabric8.io/ingress.annotations: |-
-      ingress.kubernetes.io/force-ssl-redirect: {{ .Values.nexus3.services.self.forceSslRedirect }}
+      ingress.kubernetes.io/force-ssl-redirect: {{ .Values.nexus.services.self.forceSslRedirect }}
       ingress.kubernetes.io/proxy-body-size: 900m
-      kubernetes.io/ingress.class: {{ .Values.nexus3.services.self.ingressClass }}
+      kubernetes.io/ingress.class: {{ .Values.nexus.services.self.ingressClass }}
   labels:
     expose: "true"
 {{ include "labels.stakater" . | indent 4 }}
