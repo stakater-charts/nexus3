@@ -17,13 +17,13 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "labels.selector" -}}
 app: {{ template "name" . }}
-group: {{ .Values.nexus3Storage.labels.group }}
-provider: {{ .Values.nexus3Storage.labels.provider }}
+group: {{ .Values.nexusStorage.labels.group }}
+provider: {{ .Values.nexusStorage.labels.provider }}
 {{- end -}}
 
 {{- define "labels.stakater" -}}
 {{ template "labels.selector" . }}
-version: "{{ .Values.nexus3Storage.labels.version }}"
+version: "{{ .Values.nexusStorage.labels.version }}"
 {{- end -}}
 
 {{- define "labels.chart" -}}

@@ -1,4 +1,4 @@
-nexus3:
+nexus:
   namespace: tools
   labels:
     group: com.stakater.platform
@@ -8,7 +8,7 @@ nexus3:
     name: sonatype/nexus3
     tag: "3.6.0"
     pullPolicy: IfNotPresent
-  services:    
+  services:
     docker:
       ingressClass: internal-ingress
       forceSslRedirect: "true"
@@ -27,6 +27,5 @@ nexus3:
       timeoutSeconds: 10
   persistence:
     enabled: true
-    volumeClaimName: nexus3-storage
+    volumeClaimName: nexus-storage
   configFiles:
-  
