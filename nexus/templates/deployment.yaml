@@ -23,15 +23,15 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['chown', '-R', '200', '/{{ template "name" . }}-data']
         volumeMounts:
-          - name: {{ template "name" . }}-data
+          - name: {{ template "name" . }}3-data
             mountPath: /{{ template "name" . }}-data
       - name: fmp-volume-permission2
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['chmod', '-R', '777', '/{{ template "name" . }}-conf']
+        command: ['chmod', '-R', '777', '/{{ template "name" . }}3-conf']
         volumeMounts:
-          - name: {{ template "name" . }}-conf
-            mountPath: /{{ template "name" . }}-conf
+          - name: {{ template "name" . }}3-conf
+            mountPath: /nexus3-conf
       containers:
         - name: {{ template "name" . }}
           image: "{{ .Values.nexus.image.name }}:{{ .Values.nexus.image.tag }}"
@@ -39,7 +39,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "/{{ template "name" . }}-conf/postStart.sh"]
+                command: ["/bin/sh", "/{{ template "name" . }}3-conf/postStart.sh"]
           livenessProbe:
             httpGet:
               path: /
@@ -56,18 +56,18 @@ spec:
             - containerPort: 8081
             - containerPort: 5000
           volumeMounts:
-            - name: {{ template "name" . }}-data
+            - name: {{ template "name" . }}3-data
               mountPath: /{{ template "name" . }}-data
-            - name: {{ template "name" . }}-conf
-              mountPath: /{{ template "name" . }}-conf
+            - name: {{ template "name" . }}3-conf
+              mountPath: /{{ template "name" . }}3-conf
             - name: admin-account-volume
               mountPath: /etc/secret-volume
               readOnly: true
       volumes:
-      - name: {{ template "name" . }}-conf
+      - name: {{ template "name" . }}3-conf
         configMap:
-          name: {{ template "name" . }}-conf
-      - name: {{ template "name" . }}-data
+          name: {{ template "name" . }}3-conf
+      - name: {{ template "name" . }}3-data
         {{- if .Values.nexus.persistence.enabled }}
         persistentVolumeClaim:
           claimName: {{ .Values.nexus.persistence.volumeClaimName }}
