@@ -28,4 +28,7 @@ nexus:
   persistence:
     enabled: true
     volumeClaimName: nexus-storage
+  forecastle: {}
+    # icon: https://cdn-images-1.medium.com/max/521/0*D__TQ7qMdoq3Y7kP.png
+    # expose: "true"
   configFiles:
