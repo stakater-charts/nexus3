@@ -6,6 +6,12 @@ metadata:
       ingress.kubernetes.io/force-ssl-redirect: {{ .Values.nexus.services.self.forceSslRedirect }}
       ingress.kubernetes.io/proxy-body-size: 900m
       kubernetes.io/ingress.class: {{ .Values.nexus.services.self.ingressClass }}
+    {{- with .Values.nexus.forecastle.expose }}
+      forecastle.stakater.com/expose: {{ . }}
+    {{- end }}
+    {{- with .Values.nexus.forecastle.icon }}
+      forecastle.stakater.com/icon: {{ . }}
+    {{- end }}
   labels:
     expose: "true"
 {{ include "labels.stakater" . | indent 4 }}
