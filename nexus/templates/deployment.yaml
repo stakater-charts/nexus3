@@ -1,6 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: {{ .Values.nexus.annotations.configmapReloader }}
+    secret.reloader.stakater.com/reload: {{ .Values.nexus.annotations.secretReloader }}
   name: {{ template "name" .}}
   labels:
 {{ include "labels.stakater" . | indent 4 }}

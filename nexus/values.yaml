@@ -4,6 +4,9 @@ nexus:
     group: com.stakater.platform
     provider: stakater
     version: 3.6.0
+  annotations:
+    configmapReloader: nexus3-conf
+    secretReloader: nexus-admin-account
   image:
     name: sonatype/nexus3
     tag: "3.6.0"
