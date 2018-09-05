@@ -5,7 +5,7 @@ version: 1.0.8
 keywords:
   - nexus-storage
   - kubernetes
-home: https://github.com/stakater/chart-nexus3
+home: https://github.com/stakater-charts/nexus3
 maintainers:
 - name: Stakater
   email: hello@stakater.com
