@@ -1,7 +1,7 @@
 apiVersion: v1
 name: nexus
 description: nexus chart that runs on kubernetes
-version: 1.0.8
+version: 1.0.9
 keywords:
   - nexus
   - kubernetes
