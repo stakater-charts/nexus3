@@ -1,17 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
+{{- if .Values.nexus.services.self.annotations }}
   annotations:
-    fabric8.io/ingress.annotations: |-
-      ingress.kubernetes.io/force-ssl-redirect: {{ .Values.nexus.services.self.forceSslRedirect }}
-      ingress.kubernetes.io/proxy-body-size: 900m
-      kubernetes.io/ingress.class: {{ .Values.nexus.services.self.ingressClass }}
-    {{- with .Values.nexus.forecastle.expose }}
-      forecastle.stakater.com/expose: {{ . }}
-    {{- end }}
-    {{- with .Values.nexus.forecastle.icon }}
-      forecastle.stakater.com/icon: {{ . }}
-    {{- end }}
+{{ toYaml .Values.nexus.services.self.annotations | indent 4 }}
+{{- end }}
   labels:
     expose: "true"
 {{ include "labels.stakater" . | indent 4 }}
